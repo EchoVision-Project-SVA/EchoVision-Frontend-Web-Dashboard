@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Subscription Management Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_index.css" />
-    <!-- Additional CSS for RTL adjustments, avatar styling, table alignment, and pagination -->
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -68,7 +65,6 @@
       .search-input {
         padding-left: 35px;
       }
-      /* Pagination styles */
       .pagination-container {
         margin-top: 20px;
         display: flex;
@@ -89,7 +85,6 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="logo">
         <img
@@ -128,7 +123,6 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Subscription</div>
       <div class="header-right">
@@ -137,9 +131,7 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
-      <!-- Content Header with Search -->
       <div
         class="content-header"
         style="
@@ -160,7 +152,6 @@
         >
       </div>
 
-      <!-- Table -->
       <div class="table-container" style="padding: 20px">
         <table class="users-table">
           <thead>
@@ -174,22 +165,17 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Subscription rows will be populated via API -->
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination Controls -->
       <div class="pagination-container"></div>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
     <script>
-      // Language toggle functionality (unchanged)
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -271,15 +257,12 @@
         setLanguage(currentLang);
       });
 
-      // Pagination and search settings
       let currentPage = 1;
 
-      // Function to fetch subscriptions with page and search parameters
       function fetchSubscriptions(searchQuery = "") {
         const token =
           localStorage.getItem("token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNTA1OTYsImV4cCI6MTc0MTE1NDE5Nn0.SCAsAbxP6QfxaU9rwE-Hw9QrvWzTkuQxwsEBmCZ5pus";
-        // Build API URL with query parameters for page and search
         const apiUrl = `http://localhost:3000/subscriptions?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
         )}`;
@@ -316,11 +299,9 @@
                   </div>
                 </td>
               `;
-              // Edit button: redirect using hash routing (e.g., "edit.html#123")
               row.querySelector(".edit-btn").addEventListener("click", () => {
                 window.location.href = "edit.html#" + subscription.id;
               });
-              // Delete button: send DELETE request to API and remove row on success
               row.querySelector(".delete-btn").addEventListener("click", () => {
                 if (
                   confirm("Are you sure you want to delete this subscription?")
@@ -354,7 +335,6 @@
           );
       }
 
-      // Function to render pagination buttons
       function renderPagination(totalPages) {
         const paginationContainer = document.querySelector(
           ".pagination-container"
@@ -376,7 +356,6 @@
         }
       }
 
-      // Search functionality: when user types, trigger fetch with debounce
       document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.querySelector(".search-input");
         let searchTimeout;
@@ -388,12 +367,10 @@
           }, 500);
         });
 
-        // Initial fetch without search query
         fetchSubscriptions("");
       });
     </script>
 
-    <!-- Pagination container -->
     <div class="pagination-container"></div>
   </body>
 </html>
