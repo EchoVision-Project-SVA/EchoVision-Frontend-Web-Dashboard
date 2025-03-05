@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Video (Training)</title>
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
-    <!-- Additional CSS for RTL adjustments and avatar styling -->
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -46,7 +43,6 @@
         outline: none;
         cursor: pointer;
       }
-      /* Basic styling for the form */
       .form-container {
         max-width: 500px;
         margin: 40px auto;
@@ -54,7 +50,6 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="logo">
         <img
@@ -93,7 +88,6 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Videos (Training) / Upload Video</div>
       <div class="header-right">
@@ -102,11 +96,9 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
       <div class="form-container">
         <form id="videoForm">
-          <!-- Video File Input Field -->
           <div class="mb-3">
             <label for="videoFile" class="form-label">Video File</label>
             <input
@@ -117,7 +109,6 @@
               required
             />
           </div>
-          <!-- Create Button -->
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Create</button>
           </div>
@@ -125,13 +116,10 @@
       </div>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
     <script>
-      // Language toggle functionality
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -201,7 +189,6 @@
         setLanguage(currentLang);
       });
 
-      // API functionality for uploading video
       document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("videoForm");
         form.addEventListener("submit", (e) => {
@@ -217,7 +204,6 @@
           const formData = new FormData();
           formData.append("video", file);
 
-          // Send POST request with multipart/form-data
           fetch("http://localhost:3000/videos", {
             method: "POST",
             headers: {
