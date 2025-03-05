@@ -4,18 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Pricing</title>
-    <!-- Bootstrap 5 CSS -->
+
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
-    <!-- Additional CSS for RTL adjustments and avatar styling -->
+
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -49,7 +49,7 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
+
     <div class="sidebar">
       <div class="logo">
         <img
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
+
     <div class="header">
       <div class="user-role">Pricing / Edit Pricing</div>
       <div class="header-right">
@@ -97,17 +97,17 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+
     <div class="main-container">
       <div class="form-container">
         <form id="pricingForm">
-          <!-- Plan (readonly) -->
+
           <div class="mb-3">
             <label for="plan" class="form-label">Plan</label>
             <input type="text" class="form-control" id="plan" readonly />
           </div>
 
-          <!-- Price (editable) -->
+
           <div class="mb-3">
             <label for="price" class="form-label">Price</label>
             <input
@@ -120,7 +120,7 @@
             />
           </div>
 
-          <!-- Update Button -->
+
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -128,13 +128,13 @@
       </div>
     </div>
 
-    <!-- JavaScript Libraries -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
+
     <script>
-      // Language toggle functionality
+
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -189,7 +189,7 @@
         const adminName =
           localStorage.getItem("firstName") || translations[lang].admin;
         document.querySelector(".admin-label").textContent = adminName;
-        // Update form labels and placeholders
+
         document.querySelector('label[for="plan"]').textContent =
           translations[lang].form.planLabel;
         document.querySelector('label[for="price"]').textContent =
@@ -206,24 +206,23 @@
         setLanguage(currentLang);
       });
 
-      // Utility: Get subscription ID from URL hash (e.g. "update.html#monthly" returns "monthly")
+    
       function getSubscriptionIdFromHash() {
         return window.location.hash.substring(1);
       }
 
-      // API functionality for editing pricing: fetch pricing data and handle update submission
       document.addEventListener("DOMContentLoaded", () => {
         const pricingId = getSubscriptionIdFromHash();
         const token = localStorage.getItem("token") || "YOUR_BEARER_TOKEN_HERE";
 
-        // Fetch the pricing data if pricingId exists
+
         if (pricingId) {
           fetch(`http://localhost:3000/subscriptions/${pricingId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
             .then((response) => response.json())
             .then((pricing) => {
-              // Set the plan (readonly) and price
+     
               document.getElementById("plan").value = pricing.subscription_type;
               document.getElementById("price").value = pricing.price;
             })
@@ -232,11 +231,11 @@
             );
         }
 
-        // Handle form submission to update pricing
+     
         const form = document.getElementById("pricingForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          const subscriptionType = document.getElementById("plan").value; // readonly
+          const subscriptionType = document.getElementById("plan").value; 
           const price = document.getElementById("price").value;
           const pricingData = {
             subscription_type: subscriptionType,
