@@ -4,18 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit User</title>
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/users_create.css" />
-    <!-- Additional CSS for RTL adjustments and avatar styling -->
+
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -49,7 +48,7 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
+
     <div class="sidebar">
       <div class="logo">
         <img
@@ -88,7 +87,7 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
+
     <div class="header">
       <div class="user-role">Users / Edit User</div>
       <div class="header-right">
@@ -97,11 +96,11 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+
     <div class="main-container">
       <div class="form-container">
         <form id="userForm">
-          <!-- First Name -->
+
           <div class="mb-3">
             <label for="firstName" class="form-label">First Name</label>
             <input
@@ -112,7 +111,7 @@
               required
             />
           </div>
-          <!-- Last Name -->
+
           <div class="mb-3">
             <label for="lastName" class="form-label">Last Name</label>
             <input
@@ -123,7 +122,7 @@
               required
             />
           </div>
-          <!-- Email -->
+
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input
@@ -134,7 +133,7 @@
               required
             />
           </div>
-          <!-- Password (optional; leave empty if not updating) -->
+
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input
@@ -144,7 +143,7 @@
               placeholder="Enter New Password"
             />
           </div>
-          <!-- Confirm Password -->
+
           <div class="mb-3">
             <label for="confirmPassword" class="form-label"
               >Confirm Password</label
@@ -156,12 +155,12 @@
               placeholder="Confirm New Password"
             />
           </div>
-          <!-- Is Admin? Checkbox -->
+
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="isAdmin" />
             <label class="form-check-label" for="isAdmin">Is Admin?</label>
           </div>
-          <!-- Update Button -->
+
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -169,13 +168,13 @@
       </div>
     </div>
 
-    <!-- JavaScript Libraries -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
+
     <script>
-      // Language toggle functionality
+
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -278,12 +277,12 @@
         setLanguage(currentLang);
       });
 
-      // Utility: Extract user ID from URL hash (e.g. "edit.html#123" returns "123")
+
       function getUserIdFromHash() {
         return window.location.hash.substring(1);
       }
 
-      // API functionality for editing: fetch user data and handle update submission
+
       document.addEventListener("DOMContentLoaded", () => {
         const userId = getUserIdFromHash();
         const token =
@@ -291,7 +290,7 @@
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNDg4ODAsImV4cCI6MTc0MTE1MjQ4MH0.A8d5NXx_JyJm01h6J_xFU3W9x398dqk4WlsiD-hFO_s";
 
         if (userId) {
-          // Fetch user details using the ID from the URL hash
+
           fetch(`http://localhost:3000/users/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
@@ -307,7 +306,7 @@
             );
         }
 
-        // Handle form submission for updating the user
+
         const form = document.getElementById("userForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
