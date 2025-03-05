@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overview</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (for icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="public/css/index.css" />
+    <!-- Additional CSS for RTL layout adjustments -->
+    <style>
+      html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        border-left: 2px solid #e5e5e5;
+        border-right: none;
+      }
+      html[dir="rtl"] .header {
+        right: var(--sidebar-width);
+        left: auto;
+      }
+      html[dir="rtl"] .main-container {
+        margin-right: var(--sidebar-width);
+        margin-left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <img
+          src="public/images/icon.png"
+          alt="Logo"
+          style="width: 80px; height: auto"
+        />
+      </div>
+      <div style="margin-bottom: 20px">
+        <div class="sidebar-header">Dashboards</div>
+        <!-- Overview is active to match your screenshot -->
+        <a href="index.html" class="nav-item active">
+          <i class="fas fa-chart-pie"></i> Overview
+        </a>
+        <a href="users/index.html" class="nav-item">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a href="subscriptions/index.html" class="nav-item">
+          <i class="fas fa-credit-card"></i> Subscriptions
+        </a>
+        <a href="pricing/index.html" class="nav-item">
+          <i class="fas fa-dollar-sign"></i> Pricing
+        </a>
+        <a href="upload_video/index.html" class="nav-item">
+          <i class="fas fa-upload"></i> Videos (Training)
+        </a>
+      </div>
+    </div>
+
+    <!-- HEADER (NAVBAR) -->
+    <div class="header">
+      <div class="user-role">Home</div>
+      <div class="header-right">
+        <!-- Language toggle button -->
+        <button class="avatar">AR</button>
+        <span class="admin-label">Admin</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+      <div class="cards-container">
+        <!-- Title -->
+        <div class="overview-title">Overview</div>
+
+        <!-- First Row: Sales Cards -->
+        <div class="row g-4 mb-3">
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>$5156</h5>
+              <p>Annual Sales</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>$800</h5>
+              <p>Monthly Sales</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>$120</h5>
+              <p>Daily Sales</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Row: Users, Admins, Subscriptions -->
+        <div class="row g-4">
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>1000</h5>
+              <p>Number of Users</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>3</h5>
+              <p>Number of Admins</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="overview-card">
+              <h5>700</h5>
+              <p>Number of Subscriptions</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single horizontal line below all cards -->
+        <hr class="cards-divider" />
+      </div>
+    </div>
+
+    <!-- Bootstrap & Font Awesome JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+      // Reference to the language toggle button
+      const langButton = document.querySelector(".avatar");
+      // Start with English as default
+      let currentLang = "en";
+
+      // Define translations for each text element
+      const translations = {
+        en: {
+          Home: "Home",
+          Overview: "Overview",
+          "Annual Sales": "Annual Sales",
+          "Monthly Sales": "Monthly Sales",
+          "Daily Sales": "Daily Sales",
+          "Number of Users": "Number of Users",
+          "Number of Admins": "Number of Admins",
+          "Number of Subscriptions": "Number of Subscriptions",
+          Dashboards: "Dashboards",
+          Users: "Users",
+          Subscription: "Subscription",
+          Admin: "Admin",
+        },
+        ar: {
+          Home: "الرئيسية",
+          Overview: "نظرة عامة",
+          "Annual Sales": "المبيعات السنوية",
+          "Monthly Sales": "المبيعات الشهرية",
+          "Daily Sales": "المبيعات اليومية",
+          "Number of Users": "عدد المستخدمين",
+          "Number of Admins": "عدد المشرفين",
+          "Number of Subscriptions": "عدد الاشتراكات",
+          Dashboards: "لوحات القيادة",
+          Users: "المستخدمين",
+          Subscription: "الاشتراك",
+          Admin: "مدير",
+        },
+      };
+
+      // Function to update the page language, text content, and layout direction
+      function setLanguage(lang) {
+        // Set the lang attribute and text direction on the HTML element
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+        // Update header text (e.g., Home)
+        document.querySelector(".user-role").textContent =
+          translations[lang].Home;
+        // Update overview title text
+        document.querySelector(".overview-title").textContent =
+          translations[lang].Overview;
+
+        // Update sidebar header and navigation items
+        document.querySelector(".sidebar-header").textContent =
+          translations[lang].Dashboards;
+        const navItems = document.querySelectorAll(".sidebar a.nav-item");
+        if (navItems.length >= 3) {
+          // Preserve the icons and update the text labels
+          navItems[0].innerHTML =
+            '<i class="fas fa-chart-pie"></i> ' + translations[lang].Overview;
+          navItems[1].innerHTML =
+            '<i class="fas fa-users"></i> ' + translations[lang].Users;
+          navItems[2].innerHTML =
+            '<i class="fas fa-credit-card"></i> ' +
+            translations[lang].Subscription;
+        }
+
+        // Update the admin label:
+        // Retrieve first name from localStorage (using key "firstName")
+        // Use default "Admin" from translations if not found.
+        const adminName =
+          localStorage.getItem("firstName") || translations[lang].Admin;
+        document.querySelector(".admin-label").textContent = adminName;
+
+        // Update the overview cards text (assumes cards are in the same order as below)
+        const cards = document.querySelectorAll(".overview-card");
+        if (cards.length >= 6) {
+          cards[0].querySelector("p").textContent =
+            translations[lang]["Annual Sales"];
+          cards[1].querySelector("p").textContent =
+            translations[lang]["Monthly Sales"];
+          cards[2].querySelector("p").textContent =
+            translations[lang]["Daily Sales"];
+          cards[3].querySelector("p").textContent =
+            translations[lang]["Number of Users"];
+          cards[4].querySelector("p").textContent =
+            translations[lang]["Number of Admins"];
+          cards[5].querySelector("p").textContent =
+            translations[lang]["Number of Subscriptions"];
+        }
+
+        // Toggle the button text to display the language that will be switched on next click
+        langButton.textContent = lang === "en" ? "AR" : "EN";
+      }
+
+      // Listen for click events on the language toggle button
+      langButton.addEventListener("click", () => {
+        currentLang = currentLang === "en" ? "ar" : "en";
+        setLanguage(currentLang);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add User</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (for icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../public/css/users_create.css" />
+
+    <!-- Additional CSS for RTL layout adjustments and avatar styling -->
+    <style>
+      /* RTL layout adjustments */
+      html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        border-left: 2px solid #e5e5e5;
+        border-right: none;
+      }
+      html[dir="rtl"] .header {
+        right: var(--sidebar-width);
+        left: auto;
+      }
+      html[dir="rtl"] .main-container {
+        margin-right: var(--sidebar-width);
+        margin-left: 0;
+      }
+      /* Style for avatar language toggle button */
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <img
+          src="../public/images/icon.png"
+          alt="Logo"
+          style="width: 80px; height: auto"
+        />
+      </div>
+      <div style="margin-bottom: 20px">
+        <div
+          class="sidebar-header"
+          style="
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: #888;
+            font-size: 12px;
+          "
+        >
+          Dashboards
+        </div>
+        <a href="../index.html" class="nav-item">
+          <i class="fas fa-chart-pie"></i> Overview
+        </a>
+        <a href="index.html" class="nav-item active">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a href="../subscriptions/index.html" class="nav-item">
+          <i class="fas fa-credit-card"></i> Subscriptions
+        </a>
+        <a href="../pricing/index.html" class="nav-item">
+          <i class="fas fa-dollar-sign"></i> Pricing
+        </a>
+        <a href="../upload_video/index.html" class="nav-item">
+          <i class="fas fa-upload"></i> Videos (Training)
+        </a>
+      </div>
+    </div>
+
+    <!-- HEADER (NAVBAR) -->
+    <div class="header">
+      <div class="user-role">Users / Add User</div>
+      <div class="header-right">
+        <!-- Language toggle button -->
+        <button class="avatar">AR</button>
+        <span class="admin-label">Admin</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+      <div class="form-container">
+        <!-- Note: The form has an id for easier selection -->
+        <form id="userForm">
+          <!-- First Name -->
+          <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              placeholder="Enter First Name"
+              required
+            />
+          </div>
+
+          <!-- Last Name -->
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              placeholder="Enter Last Name"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="Enter Email"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="Enter Password"
+              required
+            />
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label"
+              >Confirm Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              placeholder="Enter Password Confirmation"
+              required
+            />
+          </div>
+
+          <!-- Is Admin? Checkbox -->
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="isAdmin" />
+            <label class="form-check-label" for="isAdmin">Is Admin?</label>
+          </div>
+
+          <!-- Create Button -->
+          <div class="form-footer">
+            <button type="submit" class="btn btn-create">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bootstrap & Font Awesome JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <!-- Language Toggle and API Scripts -->
+    <script>
+      // Language toggle functionality
+      const langButton = document.querySelector(".avatar");
+      let currentLang = "en";
+      const translations = {
+        en: {
+          dashboards: "Dashboards",
+          overview: "Overview",
+          users: "Users",
+          subscription: "Subscription",
+          headerText: "Users / Add User",
+          admin: "Admin",
+          form: {
+            firstNameLabel: "First Name",
+            firstNamePlaceholder: "Enter First Name",
+            lastNameLabel: "Last Name",
+            lastNamePlaceholder: "Enter Last Name",
+            emailLabel: "Email",
+            emailPlaceholder: "Enter Email",
+            passwordLabel: "Password",
+            passwordPlaceholder: "Enter Password",
+            confirmPasswordLabel: "Confirm Password",
+            confirmPasswordPlaceholder: "Enter Password Confirmation",
+            isAdmin: "Is Admin?",
+            create: "Create",
+          },
+        },
+        ar: {
+          dashboards: "لوحات القيادة",
+          overview: "نظرة عامة",
+          users: "المستخدمين",
+          subscription: "الاشتراك",
+          headerText: "المستخدمين / إضافة مستخدم",
+          admin: "مدير",
+          form: {
+            firstNameLabel: "الاسم الأول",
+            firstNamePlaceholder: "أدخل الاسم الأول",
+            lastNameLabel: "اسم العائلة",
+            lastNamePlaceholder: "أدخل اسم العائلة",
+            emailLabel: "البريد الإلكتروني",
+            emailPlaceholder: "أدخل البريد الإلكتروني",
+            passwordLabel: "كلمة المرور",
+            passwordPlaceholder: "أدخل كلمة المرور",
+            confirmPasswordLabel: "تأكيد كلمة المرور",
+            confirmPasswordPlaceholder: "أدخل تأكيد كلمة المرور",
+            isAdmin: "هل هو مشرف؟",
+            create: "إنشاء",
+          },
+        },
+      };
+
+      function setLanguage(lang) {
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+        document.querySelector(".sidebar-header").textContent =
+          translations[lang].dashboards;
+        const navItems = document.querySelectorAll(".sidebar a.nav-item");
+        if (navItems.length >= 3) {
+          navItems[0].innerHTML =
+            '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
+          navItems[1].innerHTML =
+            '<i class="fas fa-users"></i> ' + translations[lang].users;
+          navItems[2].innerHTML =
+            '<i class="fas fa-credit-card"></i> ' +
+            translations[lang].subscription;
+        }
+        document.querySelector(".user-role").textContent =
+          translations[lang].headerText;
+        // Retrieve first name from localStorage using key "firstName", fallback to default translation if not found.
+        const adminName =
+          localStorage.getItem("firstName") || translations[lang].admin;
+        document.querySelector(".admin-label").textContent = adminName;
+        document.querySelector('label[for="firstName"]').textContent =
+          translations[lang].form.firstNameLabel;
+        document.querySelector("#firstName").placeholder =
+          translations[lang].form.firstNamePlaceholder;
+        document.querySelector('label[for="lastName"]').textContent =
+          translations[lang].form.lastNameLabel;
+        document.querySelector("#lastName").placeholder =
+          translations[lang].form.lastNamePlaceholder;
+        document.querySelector('label[for="email"]').textContent =
+          translations[lang].form.emailLabel;
+        document.querySelector("#email").placeholder =
+          translations[lang].form.emailPlaceholder;
+        document.querySelector('label[for="password"]').textContent =
+          translations[lang].form.passwordLabel;
+        document.querySelector("#password").placeholder =
+          translations[lang].form.passwordPlaceholder;
+        document.querySelector('label[for="confirmPassword"]').textContent =
+          translations[lang].form.confirmPasswordLabel;
+        document.querySelector("#confirmPassword").placeholder =
+          translations[lang].form.confirmPasswordPlaceholder;
+        document.querySelector('label[for="isAdmin"]').textContent =
+          translations[lang].form.isAdmin;
+        document.querySelector(".btn-create").textContent =
+          translations[lang].form.create;
+        langButton.textContent = lang === "en" ? "AR" : "EN";
+      }
+
+      langButton.addEventListener("click", () => {
+        currentLang = currentLang === "en" ? "ar" : "en";
+        setLanguage(currentLang);
+      });
+
+      // API fetch functionality for creating a user
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("userForm");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          // Retrieve form values
+          const firstName = document.getElementById("firstName").value;
+          const lastName = document.getElementById("lastName").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+          const isAdmin = document.getElementById("isAdmin").checked;
+
+          // Optionally validate password and confirmPassword match here
+
+          const userData = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password,
+            is_admin: isAdmin,
+          };
+
+          // Retrieve token from localStorage or use placeholder
+          const token =
+            localStorage.getItem("token") ||
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNDg4ODAsImV4cCI6MTc0MTE1MjQ4MH0.A8d5NXx_JyJm01h6J_xFU3W9x398dqk4WlsiD-hFO_s";
+
+          fetch("http://localhost:3000/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(userData),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to create user");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              alert("User created successfully!");
+              // Redirect to a specific page after successful creation, e.g., index.html
+              window.location.href = "index.html";
+            })
+            .catch((error) => {
+              console.error("Error creating user:", error);
+              alert("Error creating user");
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Management Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (for icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../public/css/subscriptions_index.css" />
+    <!-- Additional CSS for RTL adjustments, avatar styling, table alignment, and pagination -->
+    <style>
+      html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        border-left: 2px solid #e5e5e5;
+        border-right: none;
+      }
+      html[dir="rtl"] .header {
+        right: var(--sidebar-width);
+        left: auto;
+      }
+      html[dir="rtl"] .main-container {
+        margin-right: var(--sidebar-width);
+        margin-left: 0;
+      }
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+      .users-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .users-table th,
+      .users-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .search-container {
+        position: relative;
+      }
+      .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+      }
+      .search-input {
+        padding-left: 35px;
+      }
+      /* Pagination styles */
+      .pagination-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .pagination-btn {
+        cursor: pointer;
+        padding: 6px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .pagination-btn.active {
+        background-color: #0066ff;
+        color: #fff;
+        border-color: #0066ff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <img
+          src="../public/images/icon.png"
+          alt="Logo"
+          style="width: 80px; height: auto"
+        />
+      </div>
+      <div style="margin-bottom: 20px">
+        <div
+          class="sidebar-header"
+          style="
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: #888;
+            font-size: 12px;
+          "
+        >
+          Dashboards
+        </div>
+        <a href="../index.html" class="nav-item">
+          <i class="fas fa-chart-pie"></i> Overview
+        </a>
+        <a href="../users/index.html" class="nav-item">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a href="index.html" class="nav-item active">
+          <i class="fas fa-credit-card"></i> Subscriptions
+        </a>
+        <a href="../pricing/index.html" class="nav-item">
+          <i class="fas fa-dollar-sign"></i> Pricing
+        </a>
+        <a href="../upload_video/index.html" class="nav-item">
+          <i class="fas fa-upload"></i> Videos (Training)
+        </a>
+      </div>
+    </div>
+
+    <!-- HEADER (NAVBAR) -->
+    <div class="header">
+      <div class="user-role">Subscription</div>
+      <div class="header-right">
+        <button class="avatar">AR</button>
+        <span class="admin-label">Admin</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+      <!-- Content Header with Search -->
+      <div
+        class="content-header"
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+        "
+      >
+        <div class="header-left">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search..." />
+          </div>
+        </div>
+        <a href="create.html" class="add-btn" style="text-decoration: none"
+          >Add Subscription</a
+        >
+      </div>
+
+      <!-- Table -->
+      <div class="table-container" style="padding: 20px">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Subscription Type</th>
+              <th>Creation Date</th>
+              <th>Expiration Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Subscription rows will be populated via API -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-container"></div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <!-- Language Toggle and API Scripts -->
+    <script>
+      // Language toggle functionality (unchanged)
+      const langButton = document.querySelector(".avatar");
+      let currentLang = "en";
+      const translations = {
+        en: {
+          dashboards: "Dashboards",
+          overview: "Overview",
+          users: "Users",
+          subscription: "Subscription",
+          user: "Subscription",
+          admin: "Admin",
+          searchPlaceholder: "Search...",
+          addSubscription: "Add Subscription",
+          table: {
+            name: "Name",
+            subscriptionType: "Plan",
+            creationDate: "Creation Date",
+            expirationDate: "Expiration Date",
+            action: "Action",
+          },
+        },
+        ar: {
+          dashboards: "لوحات القيادة",
+          overview: "نظرة عامة",
+          users: "المستخدمين",
+          subscription: "الاشتراك",
+          user: "الاشتراك",
+          admin: "مدير",
+          searchPlaceholder: "بحث...",
+          addSubscription: "إضافة اشتراك",
+          table: {
+            name: "الاسم",
+            subscriptionType: "الخطة",
+            creationDate: "تاريخ الإنشاء",
+            expirationDate: "تاريخ الانتهاء",
+            action: "الإجراء",
+          },
+        },
+      };
+
+      function setLanguage(lang) {
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        document.querySelector(".sidebar-header").textContent =
+          translations[lang].dashboards;
+        const navItems = document.querySelectorAll(".sidebar a.nav-item");
+        if (navItems.length >= 4) {
+          navItems[0].innerHTML =
+            '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
+          navItems[1].innerHTML =
+            '<i class="fas fa-users"></i> ' + translations[lang].users;
+          navItems[2].innerHTML =
+            '<i class="fas fa-credit-card"></i> ' +
+            translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+        }
+        document.querySelector(".user-role").textContent =
+          translations[lang].user;
+        const adminName =
+          localStorage.getItem("firstName") || translations[lang].admin;
+        document.querySelector(".admin-label").textContent = adminName;
+        document.querySelector(".search-input").placeholder =
+          translations[lang].searchPlaceholder;
+        document.querySelector(".add-btn").textContent =
+          translations[lang].addSubscription;
+        const tableHeaders = document.querySelectorAll(".users-table th");
+        if (tableHeaders.length >= 6) {
+          tableHeaders[1].textContent = translations[lang].table.name;
+          tableHeaders[2].textContent =
+            translations[lang].table.subscriptionType;
+          tableHeaders[3].textContent = translations[lang].table.creationDate;
+          tableHeaders[4].textContent = translations[lang].table.expirationDate;
+          tableHeaders[5].textContent = translations[lang].table.action;
+        }
+        langButton.textContent = lang === "en" ? "AR" : "EN";
+      }
+
+      langButton.addEventListener("click", () => {
+        currentLang = currentLang === "en" ? "ar" : "en";
+        setLanguage(currentLang);
+      });
+
+      // Pagination and search settings
+      let currentPage = 1;
+
+      // Function to fetch subscriptions with page and search parameters
+      function fetchSubscriptions(searchQuery = "") {
+        const token =
+          localStorage.getItem("token") ||
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNTA1OTYsImV4cCI6MTc0MTE1NDE5Nn0.SCAsAbxP6QfxaU9rwE-Hw9QrvWzTkuQxwsEBmCZ5pus";
+        // Build API URL with query parameters for page and search
+        const apiUrl = `http://localhost:3000/subscriptions?page=${currentPage}&search=${encodeURIComponent(
+          searchQuery
+        )}`;
+        fetch(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Calculate total pages using total and limit from the response
+            const totalPages = Math.ceil(data.total / data.limit);
+            const subscriptions = data.subscriptions || [];
+            const tbody = document.querySelector(".users-table tbody");
+            tbody.innerHTML = "";
+            subscriptions.forEach((subscription, index) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${(data.page - 1) * data.limit + index + 1}</td>
+                <td>${subscription.User.first_name} ${
+                subscription.User.last_name
+              }</td>
+                <td>${subscription.Pricing.plan_name} ($${
+                subscription.Pricing.price
+              })</td>
+                <td>${subscription.createdAt}</td>
+                <td>${subscription.expiration_date}</td>
+                <td>
+                  <div class="action-buttons">
+                    <div class="edit-btn" style="cursor:pointer;">
+                      <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <div class="delete-btn" style="cursor:pointer;">
+                      <i class="fas fa-trash"></i>
+                    </div>
+                  </div>
+                </td>
+              `;
+              // Edit button: redirect using hash routing (e.g., "edit.html#123")
+              row.querySelector(".edit-btn").addEventListener("click", () => {
+                window.location.href = "edit.html#" + subscription.id;
+              });
+              // Delete button: send DELETE request to API and remove row on success
+              row.querySelector(".delete-btn").addEventListener("click", () => {
+                if (
+                  confirm("Are you sure you want to delete this subscription?")
+                ) {
+                  fetch(
+                    `http://localhost:3000/subscriptions/${subscription.id}`,
+                    {
+                      method: "DELETE",
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
+                  )
+                    .then((response) => {
+                      if (!response.ok) {
+                        throw new Error("Failed to delete subscription");
+                      }
+                      row.remove();
+                      alert("Subscription deleted successfully!");
+                    })
+                    .catch((error) => {
+                      console.error("Error deleting subscription:", error);
+                      alert("Error deleting subscription");
+                    });
+                }
+              });
+              tbody.appendChild(row);
+            });
+            renderPagination(totalPages);
+          })
+          .catch((error) =>
+            console.error("Error fetching subscriptions data:", error)
+          );
+      }
+
+      // Function to render pagination buttons
+      function renderPagination(totalPages) {
+        const paginationContainer = document.querySelector(
+          ".pagination-container"
+        );
+        paginationContainer.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("div");
+          btn.textContent = i;
+          btn.classList.add("pagination-btn");
+          if (i === currentPage) {
+            btn.classList.add("active");
+          }
+          btn.addEventListener("click", () => {
+            currentPage = i;
+            const searchQuery = document.querySelector(".search-input").value;
+            fetchSubscriptions(searchQuery);
+          });
+          paginationContainer.appendChild(btn);
+        }
+      }
+
+      // Search functionality: when user types, trigger fetch with debounce
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.querySelector(".search-input");
+        let searchTimeout;
+        searchInput.addEventListener("input", () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            currentPage = 1;
+            fetchSubscriptions(searchInput.value);
+          }, 500);
+        });
+
+        // Initial fetch without search query
+        fetchSubscriptions("");
+      });
+    </script>
+
+    <!-- Pagination container -->
+    <div class="pagination-container"></div>
+  </body>
+</html>

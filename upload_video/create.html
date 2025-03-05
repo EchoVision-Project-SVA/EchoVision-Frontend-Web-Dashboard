@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Video (Training)</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (for icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
+    <!-- Additional CSS for RTL adjustments and avatar styling -->
+    <style>
+      html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        border-left: 2px solid #e5e5e5;
+        border-right: none;
+      }
+      html[dir="rtl"] .header {
+        right: var(--sidebar-width);
+        left: auto;
+      }
+      html[dir="rtl"] .main-container {
+        margin-right: var(--sidebar-width);
+        margin-left: 0;
+      }
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+      /* Basic styling for the form */
+      .form-container {
+        max-width: 500px;
+        margin: 40px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <img
+          src="../public/images/icon.png"
+          alt="Logo"
+          style="width: 80px; height: auto"
+        />
+      </div>
+      <div style="margin-bottom: 20px">
+        <div
+          class="sidebar-header"
+          style="
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: #888;
+            font-size: 12px;
+          "
+        >
+          Dashboards
+        </div>
+        <a href="../index.html" class="nav-item">
+          <i class="fas fa-chart-pie"></i> Overview
+        </a>
+        <a href="../users/index.html" class="nav-item">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a href="../subscriptions/index.html" class="nav-item">
+          <i class="fas fa-credit-card"></i> Subscriptions
+        </a>
+        <a href="../pricing/index.html" class="nav-item">
+          <i class="fas fa-dollar-sign"></i> Pricing
+        </a>
+        <a href="../upload_video/index.html" class="nav-item active">
+          <i class="fas fa-video"></i> Videos (Training)
+        </a>
+      </div>
+    </div>
+
+    <!-- HEADER (NAVBAR) -->
+    <div class="header">
+      <div class="user-role">Videos (Training) / Upload Video</div>
+      <div class="header-right">
+        <button class="avatar">AR</button>
+        <span class="admin-label">Admin</span>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+      <div class="form-container">
+        <form id="videoForm">
+          <!-- Video File Input Field -->
+          <div class="mb-3">
+            <label for="videoFile" class="form-label">Video File</label>
+            <input
+              type="file"
+              class="form-control"
+              id="videoFile"
+              accept="video/*"
+              required
+            />
+          </div>
+          <!-- Create Button -->
+          <div class="form-footer">
+            <button type="submit" class="btn btn-create">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <!-- Language Toggle and API Scripts -->
+    <script>
+      // Language toggle functionality
+      const langButton = document.querySelector(".avatar");
+      let currentLang = "en";
+      const translations = {
+        en: {
+          dashboards: "Dashboards",
+          overview: "Overview",
+          users: "Users",
+          subscription: "Subscription",
+          headerText: "Videos (Training) / Upload Video",
+          admin: "Admin",
+          form: {
+            videoLabel: "Video File",
+            videoPlaceholder: "Choose a video file",
+            create: "Create",
+          },
+        },
+        ar: {
+          dashboards: "لوحات القيادة",
+          overview: "نظرة عامة",
+          users: "المستخدمين",
+          subscription: "الاشتراك",
+          headerText: "الفيديوهات (التدريب) / رفع فيديو",
+          admin: "مدير",
+          form: {
+            videoLabel: "ملف الفيديو",
+            videoPlaceholder: "اختر ملف فيديو",
+            create: "إنشاء",
+          },
+        },
+      };
+
+      function setLanguage(lang) {
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        document.querySelector(".sidebar-header").textContent =
+          translations[lang].dashboards;
+        const navItems = document.querySelectorAll(".sidebar a.nav-item");
+        if (navItems.length >= 5) {
+          navItems[0].innerHTML =
+            '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
+          navItems[1].innerHTML =
+            '<i class="fas fa-users"></i> ' + translations[lang].users;
+          navItems[2].innerHTML =
+            '<i class="fas fa-credit-card"></i> ' +
+            translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-video"></i> Videos (Training)';
+        }
+        document.querySelector(".user-role").textContent =
+          translations[lang].headerText;
+        const adminName =
+          localStorage.getItem("firstName") || translations[lang].admin;
+        document.querySelector(".admin-label").textContent = adminName;
+        // Update form labels and placeholders
+        document.querySelector('label[for="videoFile"]').textContent =
+          translations[lang].form.videoLabel;
+        document.querySelector("#videoFile").placeholder =
+          translations[lang].form.videoPlaceholder;
+        document.querySelector(".btn-create").textContent =
+          translations[lang].form.create;
+        langButton.textContent = lang === "en" ? "AR" : "EN";
+      }
+
+      langButton.addEventListener("click", () => {
+        currentLang = currentLang === "en" ? "ar" : "en";
+        setLanguage(currentLang);
+      });
+
+      // API functionality for uploading video
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("videoForm");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const token =
+            localStorage.getItem("token") || "YOUR_BEARER_TOKEN_HERE";
+          const fileInput = document.getElementById("videoFile");
+          if (fileInput.files.length === 0) {
+            alert("Please select a video file.");
+            return;
+          }
+          const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append("video", file);
+
+          // Send POST request with multipart/form-data
+          fetch("http://localhost:3000/videos", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to upload video");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              alert("Video uploaded successfully!");
+              window.location.href = "index.html";
+            })
+            .catch((error) => {
+              console.error("Error uploading video:", error);
+              alert("Error uploading video");
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
