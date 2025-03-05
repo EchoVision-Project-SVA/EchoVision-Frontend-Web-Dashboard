@@ -5,21 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add User</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/users_create.css" />
 
-    <!-- Additional CSS for RTL layout adjustments and avatar styling -->
+
     <style>
-      /* RTL layout adjustments */
+
       html[dir="rtl"] .sidebar {
         right: 0;
         left: auto;
@@ -34,7 +33,7 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
-      /* Style for avatar language toggle button */
+
       .avatar {
         width: 36px;
         height: 36px;
@@ -53,7 +52,7 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
+
     <div class="sidebar">
       <div class="logo">
         <img
@@ -92,22 +91,18 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Users / Add User</div>
       <div class="header-right">
-        <!-- Language toggle button -->
         <button class="avatar">AR</button>
         <span class="admin-label">Admin</span>
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
       <div class="form-container">
-        <!-- Note: The form has an id for easier selection -->
+
         <form id="userForm">
-          <!-- First Name -->
           <div class="mb-3">
             <label for="firstName" class="form-label">First Name</label>
             <input
@@ -119,7 +114,6 @@
             />
           </div>
 
-          <!-- Last Name -->
           <div class="mb-3">
             <label for="lastName" class="form-label">Last Name</label>
             <input
@@ -131,7 +125,6 @@
             />
           </div>
 
-          <!-- Email -->
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input
@@ -143,7 +136,6 @@
             />
           </div>
 
-          <!-- Password -->
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input
@@ -155,7 +147,6 @@
             />
           </div>
 
-          <!-- Confirm Password -->
           <div class="mb-3">
             <label for="confirmPassword" class="form-label"
               >Confirm Password</label
@@ -169,13 +160,13 @@
             />
           </div>
 
-          <!-- Is Admin? Checkbox -->
+
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="isAdmin" />
             <label class="form-check-label" for="isAdmin">Is Admin?</label>
           </div>
 
-          <!-- Create Button -->
+
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Create</button>
           </div>
@@ -183,13 +174,13 @@
       </div>
     </div>
 
-    <!-- Bootstrap & Font Awesome JS -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
+
     <script>
-      // Language toggle functionality
+
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -257,7 +248,7 @@
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
-        // Retrieve first name from localStorage using key "firstName", fallback to default translation if not found.
+
         const adminName =
           localStorage.getItem("firstName") || translations[lang].admin;
         document.querySelector(".admin-label").textContent = adminName;
@@ -293,12 +284,11 @@
         setLanguage(currentLang);
       });
 
-      // API fetch functionality for creating a user
       document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("userForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          // Retrieve form values
+
           const firstName = document.getElementById("firstName").value;
           const lastName = document.getElementById("lastName").value;
           const email = document.getElementById("email").value;
@@ -307,7 +297,6 @@
             document.getElementById("confirmPassword").value;
           const isAdmin = document.getElementById("isAdmin").checked;
 
-          // Optionally validate password and confirmPassword match here
 
           const userData = {
             first_name: firstName,
@@ -317,7 +306,6 @@
             is_admin: isAdmin,
           };
 
-          // Retrieve token from localStorage or use placeholder
           const token =
             localStorage.getItem("token") ||
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNDg4ODAsImV4cCI6MTc0MTE1MjQ4MH0.A8d5NXx_JyJm01h6J_xFU3W9x398dqk4WlsiD-hFO_s";
@@ -338,7 +326,6 @@
             })
             .then((data) => {
               alert("User created successfully!");
-              // Redirect to a specific page after successful creation, e.g., index.html
               window.location.href = "index.html";
             })
             .catch((error) => {
