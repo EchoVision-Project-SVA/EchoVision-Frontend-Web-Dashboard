@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Subscription</title>
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
-    <!-- Additional CSS for RTL adjustments and avatar styling -->
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -49,7 +46,6 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="logo">
         <img
@@ -88,7 +84,6 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Subscriptions / Edit Subscription</div>
       <div class="header-right">
@@ -97,20 +92,16 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
       <div class="form-container">
         <form id="subscriptionForm">
-          <!-- User Name Select Field -->
           <div class="mb-3">
             <label for="userName" class="form-label">User Name</label>
             <select class="form-select" id="userName" required>
               <option selected disabled>Select User</option>
-              <!-- Options will be populated via API -->
             </select>
           </div>
 
-          <!-- Subscription Type Select Field -->
           <div class="mb-3">
             <label for="subscriptionType" class="form-label"
               >Subscription Type</label
@@ -122,7 +113,6 @@
             </select>
           </div>
 
-          <!-- Update Button -->
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -130,13 +120,10 @@
       </div>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
     <script>
-      // Language toggle functionality
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -212,26 +199,22 @@
         setLanguage(currentLang);
       });
 
-      // Utility: Get subscription ID from URL hash (e.g. "update.html#123" returns "123")
       function getSubscriptionIdFromHash() {
         return window.location.hash.substring(1);
       }
 
-      // API functionality for editing the subscription
       document.addEventListener("DOMContentLoaded", () => {
         const subscriptionId = getSubscriptionIdFromHash();
         const token =
           localStorage.getItem("token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExMjg3NzEsImV4cCI6MTc0MTEzMjM3MX0.HF3OU0-hfe_VtbUMslErMZ4x0ljfCRITlHEgS3g2cYw";
 
-        // First, fetch users to populate the "User Name" select box
         fetch("http://localhost:3000/users", {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((response) => response.json())
           .then((users) => {
             const userSelect = document.getElementById("userName");
-            // Clear existing options if needed (the default option is already there)
             users.forEach((user) => {
               const option = document.createElement("option");
               option.value = user.id;
@@ -239,17 +222,14 @@
               userSelect.appendChild(option);
             });
 
-            // Now fetch the subscription details if subscriptionId exists
             if (subscriptionId) {
               fetch(`http://localhost:3000/subscriptions/${subscriptionId}`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
                 .then((response) => response.json())
                 .then((subscription) => {
-                  // Set subscription type
                   document.getElementById("subscriptionType").value =
                     subscription.subscription_type;
-                  // Set user select to the subscription's user_id (using property "user_id")
                   document.getElementById("userName").value =
                     subscription.user_id;
                 })
@@ -260,7 +240,6 @@
           })
           .catch((error) => console.error("Error fetching users:", error));
 
-        // Handle form submission to update the subscription
         const form = document.getElementById("subscriptionForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
