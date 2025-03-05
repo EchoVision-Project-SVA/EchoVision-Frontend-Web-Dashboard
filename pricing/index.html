@@ -4,18 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pricing Management Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
+
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_index.css" />
-    <!-- Additional CSS for RTL adjustments, avatar styling, table alignment, and pagination -->
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -85,7 +84,6 @@
         color: #fff;
         border-color: #0066ff;
       }
-      /* Ensure edit and delete buttons are aligned side by side */
       .action-buttons {
         display: flex;
         gap: 10px;
@@ -93,7 +91,6 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="logo">
         <img
@@ -132,7 +129,6 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Pricing</div>
       <div class="header-right">
@@ -141,9 +137,7 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
-      <!-- Content Header with Search -->
       <div
         class="content-header"
         style="
@@ -176,22 +170,17 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Pricing rows will be populated via API -->
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination Controls -->
       <div class="pagination-container"></div>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
     <script>
-      // Language toggle functionality
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -266,14 +255,11 @@
         setLanguage(currentLang);
       });
 
-      // Pagination and search settings
       let currentPage = 1;
-      // Function to fetch pricing data with page and search parameters (no limit parameter)
       function fetchPricing(searchQuery = "") {
         const token =
           localStorage.getItem("token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNTA1OTYsImV4cCI6MTc0MTE1NDE5Nn0.SCAsAbxP6QfxaU9rwE-Hw9QrvWzTkuQxwsEBmCZ5pus";
-        // Build API URL with page and search parameters
         const apiUrl = `http://localhost:3000/pricing?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
         )}`;
@@ -282,7 +268,6 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            // Expecting data: { total, page, pricing: [...], totalPages }
             const pricing = data.pricing || [];
             const totalPages = data.totalPages || 1;
             const tbody = document.querySelector(".users-table tbody");
@@ -306,7 +291,6 @@
                   </div>
                 </td>
               `;
-              // Delete button: send DELETE request to API and remove row on success
               row.querySelector(".delete-btn").addEventListener("click", () => {
                 if (confirm("Are you sure you want to delete this pricing?")) {
                   fetch(`http://localhost:3000/pricing/${item.id}`, {
@@ -335,7 +319,6 @@
           );
       }
 
-      // Function to render pagination buttons
       function renderPagination(totalPages) {
         const paginationContainer = document.querySelector(
           ".pagination-container"
@@ -357,7 +340,6 @@
         }
       }
 
-      // Search functionality with debounce
       document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.querySelector(".search-input");
         let searchTimeout;
@@ -368,12 +350,10 @@
             fetchPricing(searchInput.value);
           }, 500);
         });
-        // Initial fetch without search query
         fetchPricing("");
       });
     </script>
 
-    <!-- Pagination container -->
     <div class="pagination-container"></div>
   </body>
 </html>
