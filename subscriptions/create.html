@@ -5,21 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Subscription</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Font Awesome (for icons) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
 
-    <!-- Additional CSS for RTL layout adjustments and avatar styling -->
     <style>
-      /* RTL layout adjustments */
       html[dir="rtl"] .sidebar {
         right: 0;
         left: auto;
@@ -34,7 +30,6 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
-      /* Style for avatar language toggle button */
       .avatar {
         width: 36px;
         height: 36px;
@@ -53,7 +48,6 @@
     </style>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="logo">
         <img
@@ -82,30 +76,24 @@
       </div>
     </div>
 
-    <!-- HEADER (NAVBAR) -->
     <div class="header">
       <div class="user-role">Subscriptions / Add Subscription</div>
       <div class="header-right">
-        <!-- Changed from div to button for language toggle -->
         <button class="avatar">AR</button>
         <span class="admin-label">Admin</span>
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-container">
       <div class="form-container">
         <form id="subscriptionForm">
-          <!-- User Name Select Field -->
           <div class="mb-3">
             <label for="userName" class="form-label">User Name</label>
             <select class="form-select" id="userName">
               <option selected disabled>Select User</option>
-              <!-- Options will be populated via API -->
             </select>
           </div>
 
-          <!-- Subscription Type Select Field -->
           <div class="mb-3">
             <label for="subscriptionType" class="form-label">
               Subscription Type
@@ -117,7 +105,6 @@
             </select>
           </div>
 
-          <!-- Create Button -->
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Create</button>
           </div>
@@ -125,13 +112,10 @@
       </div>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-    <!-- Language Toggle and API Scripts -->
     <script>
-      // Language toggle functionality
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -185,7 +169,6 @@
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
-        // Retrieve first name from localStorage (key "firstName") or use default
         const adminName =
           localStorage.getItem("firstName") || translations[lang].admin;
         document.querySelector(".admin-label").textContent = adminName;
@@ -208,14 +191,11 @@
         setLanguage(currentLang);
       });
 
-      // API fetch functionality for populating the user select and handling form submission
       document.addEventListener("DOMContentLoaded", () => {
-        // Retrieve token from localStorage or use a placeholder token
         const token =
           localStorage.getItem("token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExMjQ4NTcsImV4cCI6MTc0MTEyODQ1N30.tJ7TlK11gpacFbWk_VHwPtMggibV-YZrXG36Na-PFVg";
 
-        // Fetch users to populate the "User Name" select box
         fetch("http://localhost:3000/users", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -234,16 +214,14 @@
           })
           .catch((error) => console.error("Error fetching users:", error));
 
-        // Handle form submission to create subscription
         const form = document.getElementById("subscriptionForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          // Get selected user ID
           const userId = document.getElementById("userName").value;
           // Get selected subscription type
           const subscriptionType =
             document.getElementById("subscriptionType").value;
-          // Build subscription object; adjust keys as needed by your API
+
           const subscriptionData = {
             user_id: userId,
             subscription_type: subscriptionType,
@@ -265,7 +243,7 @@
             })
             .then((data) => {
               alert("Subscription created successfully!");
-              // Redirect to a specific page after successful creation
+              
               window.location.href = "index.html";
             })
             .catch((error) => {
