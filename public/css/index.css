@@ -14,17 +14,15 @@ body {
   color: #333;
 }
 
-/* ================================
-     SIDEBAR
-  ================================ */
+
 .sidebar {
   position: fixed;
-  top: 60px; /* Start below the header */
+  top: 60px; 
   left: 0;
   width: var(--sidebar-width);
-  height: calc(100vh - 60px); /* Fill remaining vertical space */
+  height: calc(100vh - 60px); 
   background-color: #ffffff;
-  border-right: 2px solid #e5e5e5; /* Vertical divider */
+  border-right: 2px solid #e5e5e5; 
   display: flex;
   flex-direction: column;
   padding-top: 20px;
@@ -74,9 +72,7 @@ body {
   color: #000000;
 }
 
-/* ================================
-     HEADER / NAVBAR
-  ================================ */
+
 .header {
   position: fixed;
   top: 0;
@@ -112,8 +108,8 @@ body {
   color: #444;
   font-weight: 500;
   font-size: 14px;
-  border: none; /* Removes the border */
-  outline: none; /* Removes the focus outline */
+  border: none;
+  outline: none; 
 }
 
 .admin-label {
@@ -121,12 +117,10 @@ body {
   font-weight: 500;
 }
 
-/* ================================
-     MAIN CONTAINER
-  ================================ */
+
 .main-container {
   margin-left: var(--sidebar-width);
-  padding: 80px 30px 20px; /* Ensure content is below the fixed header */
+  padding: 80px 30px 20px; 
   min-height: 100vh;
   background-color: #fff;
   display: flex;
@@ -134,12 +128,9 @@ body {
   align-items: center;
 }
 
-/* ================================
-     OVERVIEW CARDS
-  ================================ */
 .cards-container {
   width: 100%;
-  max-width: 1200px; /* Adjust as needed */
+  max-width: 1200px; 
 }
 
 .overview-title {
@@ -149,7 +140,7 @@ body {
   color: #333;
 }
 
-/* Card styling with background #F4F4F4 */
+
 .overview-card {
   background-color: #f4f4f4;
   border: 1px solid #e5e5e5;
@@ -168,10 +159,10 @@ body {
   font-size: 14px;
 }
 
-/* Horizontal line styling */
+
 .cards-divider {
   width: 100%;
   border: none;
   border-top: 3px solid #e5e5e5;
-  margin: 40px 0; /* Space above and below the line */
+  margin: 40px 0; 
 }
