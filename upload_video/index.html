@@ -43,6 +43,22 @@
         outline: none;
         cursor: pointer;
       }
+      .language-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 10px;
+      }
       .users-table {
         width: 100%;
         border-collapse: collapse;
@@ -127,11 +143,26 @@
       </div>
     </div>
 
-    <div class="header">
+    <div
+      class="header d-flex justify-content-between align-items-center px-3 py-2"
+    >
       <div class="user-role">Videos (Training)</div>
-      <div class="header-right">
-        <button class="avatar">AR</button>
-        <span class="admin-label">Admin</span>
+      <div class="header-right d-flex align-items-center">
+        <button class="language-btn" id="languageBtn">AR</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="admin-label">Admin</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -164,12 +195,9 @@
               <th>File Path</th>
               <th>Status</th>
               <th>Created At</th>
-              <th>Action</th>
             </tr>
           </thead>
-          
-          <tbody>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
 
@@ -180,7 +208,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -260,11 +287,12 @@
         setLanguage(currentLang);
       });
 
-
       let currentPage = 1;
 
       function fetchVideos(searchQuery = "") {
-        const token = localStorage.getItem("token") || "YOUR_BEARER_TOKEN_HERE";
+        const token =
+          localStorage.getItem("token") ||
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2NzgwMzYsImV4cCI6MTc0MTY4MTYzNn0.uUnm48CGlz3ZAbxMrWBHHHpZCiTjL6ki7V_x3wSbbfg";
         const apiUrl = `http://localhost:3000/videos?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
         )}`;
@@ -273,9 +301,7 @@
         })
           .then((response) => response.json())
           .then((data) => {
-
             const videos = data.videos || [];
-            const totalPages = data.totalPages || 1;
             const tbody = document.querySelector(".users-table tbody");
             tbody.innerHTML = "";
             videos.forEach((video, index) => {
@@ -285,43 +311,15 @@
                 <td>${video.file_path}</td>
                 <td>${video.status}</td>
                 <td>${new Date(video.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <div class="action-buttons">
-                    <div class="delete-btn" style="cursor: pointer;">
-                      <i class="fas fa-trash"></i>
-                    </div>
-                  </div>
-                </td>
               `;
-
-              row.querySelector(".delete-btn").addEventListener("click", () => {
-                if (confirm("Are you sure you want to delete this video?")) {
-                  fetch(`http://localhost:3000/videos/${video.id}`, {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` },
-                  })
-                    .then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Failed to delete video");
-                      }
-                      row.remove();
-                      alert("Video deleted successfully!");
-                    })
-                    .catch((error) => {
-                      console.error("Error deleting video:", error);
-                      alert("Error deleting video");
-                    });
-                }
-              });
               tbody.appendChild(row);
             });
-            renderPagination(totalPages);
+            renderPagination(data.totalPages || 1);
           })
           .catch((error) =>
             console.error("Error fetching videos data:", error)
           );
       }
-
 
       function renderPagination(totalPages) {
         const paginationContainer = document.querySelector(
@@ -344,7 +342,6 @@
         }
       }
 
-
       document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.querySelector(".search-input");
         let searchTimeout;
@@ -355,12 +352,9 @@
             fetchVideos(searchInput.value);
           }, 500);
         });
-
         fetchVideos("");
       });
     </script>
-
-
     <div class="pagination-container"></div>
   </body>
 </html>

@@ -43,6 +43,22 @@
         outline: none;
         cursor: pointer;
       }
+      .language-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 10px;
+      }
       .users-table {
         width: 100%;
         border-collapse: collapse;
@@ -123,11 +139,26 @@
       </div>
     </div>
 
-    <div class="header">
+    <div
+      class="header d-flex justify-content-between align-items-center px-3 py-2"
+    >
       <div class="user-role">Subscription</div>
-      <div class="header-right">
-        <button class="avatar">AR</button>
-        <span class="admin-label">Admin</span>
+      <div class="header-right d-flex align-items-center">
+        <button class="language-btn" id="languageBtn">AR</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="admin-label">Admin</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -164,8 +195,7 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
 
@@ -262,7 +292,7 @@
       function fetchSubscriptions(searchQuery = "") {
         const token =
           localStorage.getItem("token") ||
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNTA1OTYsImV4cCI6MTc0MTE1NDE5Nn0.SCAsAbxP6QfxaU9rwE-Hw9QrvWzTkuQxwsEBmCZ5pus";
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
         const apiUrl = `http://localhost:3000/subscriptions?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
         )}`;
@@ -271,7 +301,6 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            // Calculate total pages using total and limit from the response
             const totalPages = Math.ceil(data.total / data.limit);
             const subscriptions = data.subscriptions || [];
             const tbody = document.querySelector(".users-table tbody");

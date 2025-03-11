@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Overview</title>
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
@@ -13,9 +12,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-
     <link rel="stylesheet" href="public/css/index.css" />
-
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -31,10 +28,31 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
+      /* Dropdown menu styling */
+      .dropdown-menu {
+        right: 0;
+        left: auto;
+      }
+      /* Language button styling */
+      .language-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
-
     <div class="sidebar">
       <div class="logo">
         <img
@@ -45,7 +63,6 @@
       </div>
       <div style="margin-bottom: 20px">
         <div class="sidebar-header">Dashboards</div>
-
         <a href="index.html" class="nav-item active">
           <i class="fas fa-chart-pie"></i> Overview
         </a>
@@ -64,79 +81,96 @@
       </div>
     </div>
 
-    <div class="header">
+    <div
+      class="header d-flex justify-content-between align-items-center px-3 py-2"
+    >
       <div class="user-role">Home</div>
-      <div class="header-right">
-
-        <button class="avatar">AR</button>
-        <span class="admin-label">Admin</span>
+      <div class="header-right d-flex align-items-center">
+        <button class="language-btn" id="languageBtn">AR</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="admin-label">Admin</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
     <div class="main-container">
       <div class="cards-container">
-
         <div class="overview-title">Overview</div>
-
-
         <div class="row g-4 mb-3">
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>$5156</h5>
+              <h5>$0</h5>
               <p>Annual Sales</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>$800</h5>
+              <h5>$0</h5>
               <p>Monthly Sales</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>$120</h5>
+              <h5>$0</h5>
               <p>Daily Sales</p>
             </div>
           </div>
         </div>
-
-
         <div class="row g-4">
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>1000</h5>
+              <h5>0</h5>
               <p>Number of Users</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>3</h5>
+              <h5>0</h5>
               <p>Number of Admins</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
             <div class="overview-card">
-              <h5>700</h5>
+              <h5>0</h5>
               <p>Number of Subscriptions</p>
             </div>
           </div>
         </div>
-
-
         <hr class="cards-divider" />
       </div>
     </div>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
+      function handleUnauthorized(response) {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "login.html";
+          return true;
+        }
+        return false;
+      }
 
-      const langButton = document.querySelector(".avatar");
+      document.getElementById("logoutBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+      });
 
+      const languageBtn = document.getElementById("languageBtn");
       let currentLang = "en";
-
-
       const translations = {
         en: {
           Home: "Home",
@@ -168,25 +202,17 @@
         },
       };
 
-
       function setLanguage(lang) {
-
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
-
         document.querySelector(".user-role").textContent =
           translations[lang].Home;
-
         document.querySelector(".overview-title").textContent =
           translations[lang].Overview;
-
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].Dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
         if (navItems.length >= 3) {
-
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].Overview;
           navItems[1].innerHTML =
@@ -195,34 +221,44 @@
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].Subscription;
         }
-
-
         const adminName =
           localStorage.getItem("firstName") || translations[lang].Admin;
         document.querySelector(".admin-label").textContent = adminName;
-
-        const cards = document.querySelectorAll(".overview-card");
-        if (cards.length >= 6) {
-          cards[0].querySelector("p").textContent =
-            translations[lang]["Annual Sales"];
-          cards[1].querySelector("p").textContent =
-            translations[lang]["Monthly Sales"];
-          cards[2].querySelector("p").textContent =
-            translations[lang]["Daily Sales"];
-          cards[3].querySelector("p").textContent =
-            translations[lang]["Number of Users"];
-          cards[4].querySelector("p").textContent =
-            translations[lang]["Number of Admins"];
-          cards[5].querySelector("p").textContent =
-            translations[lang]["Number of Subscriptions"];
-        }
-
-        langButton.textContent = lang === "en" ? "AR" : "EN";
+        languageBtn.textContent = lang === "en" ? "AR" : "EN";
       }
 
-      langButton.addEventListener("click", () => {
+      languageBtn.addEventListener("click", () => {
         currentLang = currentLang === "en" ? "ar" : "en";
         setLanguage(currentLang);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token") || "YOUR_FALLBACK_TOKEN";
+        const apiUrl = "http://localhost:3000/stats/dashboard";
+        fetch(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((response) => {
+            if (handleUnauthorized(response)) return;
+            return response.json();
+          })
+          .then((data) => {
+            const cards = document.querySelectorAll(".overview-card");
+            if (cards.length >= 6) {
+              cards[0].querySelector("h5").textContent = `$${data.annualSales}`;
+              cards[1].querySelector(
+                "h5"
+              ).textContent = `$${data.monthlySales}`;
+              cards[2].querySelector("h5").textContent = `$${data.dailySales}`;
+              cards[3].querySelector("h5").textContent = data.totalUsers;
+              cards[4].querySelector("h5").textContent = data.adminUsers;
+              cards[5].querySelector("h5").textContent =
+                data.totalSubscriptions;
+            }
+          })
+          .catch((err) =>
+            console.error("Error fetching dashboard stats:", err)
+          );
       });
     </script>
   </body>

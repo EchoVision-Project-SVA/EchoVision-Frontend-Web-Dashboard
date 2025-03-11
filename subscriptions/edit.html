@@ -43,6 +43,22 @@
         outline: none;
         cursor: pointer;
       }
+      .language-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
@@ -84,11 +100,26 @@
       </div>
     </div>
 
-    <div class="header">
+    <div
+      class="header d-flex justify-content-between align-items-center px-3 py-2"
+    >
       <div class="user-role">Subscriptions / Edit Subscription</div>
-      <div class="header-right">
-        <button class="avatar">AR</button>
-        <span class="admin-label">Admin</span>
+      <div class="header-right d-flex align-items-center">
+        <button class="language-btn" id="languageBtn">AR</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="admin-label">Admin</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -98,7 +129,7 @@
           <div class="mb-3">
             <label for="userName" class="form-label">User Name</label>
             <select class="form-select" id="userName" required>
-              <option selected disabled>Select User</option>
+              <option value="" selected disabled>Select User</option>
             </select>
           </div>
 
@@ -107,9 +138,9 @@
               >Subscription Type</label
             >
             <select class="form-select" id="subscriptionType" required>
-              <option selected disabled>Select Subscription Type</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
+              <option value="" selected disabled>
+                Select Subscription Type
+              </option>
             </select>
           </div>
 
@@ -162,11 +193,10 @@
       function setLanguage(lang) {
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
-        if (navItems.length >= 3) {
+        if (navItems.length >= 5) {
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
           navItems[1].innerHTML =
@@ -174,6 +204,9 @@
           navItems[2].innerHTML =
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-upload"></i> Videos (Training)';
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
@@ -204,52 +237,107 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang);
         const subscriptionId = getSubscriptionIdFromHash();
         const token =
           localStorage.getItem("token") ||
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExMjg3NzEsImV4cCI6MTc0MTEzMjM3MX0.HF3OU0-hfe_VtbUMslErMZ4x0ljfCRITlHEgS3g2cYw";
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
-        fetch("http://localhost:3000/users", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((response) => response.json())
-          .then((users) => {
-            const userSelect = document.getElementById("userName");
+        const userSelect = document.getElementById("userName");
+        const subscriptionTypeSelect =
+          document.getElementById("subscriptionType");
+
+        userSelect.addEventListener("change", () => {
+          console.log("User Select Changed to:", userSelect.value);
+        });
+        subscriptionTypeSelect.addEventListener("change", () => {
+          console.log(
+            "Subscription Type Changed to:",
+            subscriptionTypeSelect.value
+          );
+        });
+
+        Promise.all([
+          fetch("http://localhost:3000/users", {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch users");
+            return response.json();
+          }),
+          fetch("http://localhost:3000/pricing", {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch pricing");
+            return response.json();
+          }),
+        ])
+          .then(([userData, pricingData]) => {
+            console.log("Fetched Users:", userData);
+            const users = Array.isArray(userData.users) ? userData.users : [];
             users.forEach((user) => {
               const option = document.createElement("option");
-              option.value = user.id;
-              option.textContent = user.first_name + " " + user.last_name;
+              option.value = String(user.id);
+              option.textContent = `${user.first_name} ${user.last_name}`;
               userSelect.appendChild(option);
             });
 
+            console.log("Fetched Pricing Data:", pricingData);
+            const pricingArray = Array.isArray(pricingData.pricing)
+              ? pricingData.pricing
+              : [];
+            pricingArray.forEach((pricing) => {
+              const option = document.createElement("option");
+              option.value = String(pricing.id);
+              option.textContent = pricing.plan_name;
+              subscriptionTypeSelect.appendChild(option);
+            });
+
             if (subscriptionId) {
-              fetch(`http://localhost:3000/subscriptions/${subscriptionId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              })
-                .then((response) => response.json())
-                .then((subscription) => {
-                  document.getElementById("subscriptionType").value =
-                    subscription.subscription_type;
-                  document.getElementById("userName").value =
-                    subscription.user_id;
-                })
-                .catch((error) =>
-                  console.error("Error fetching subscription data:", error)
-                );
+              return fetch(
+                `http://localhost:3000/subscriptions/${subscriptionId}`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              ).then((response) => {
+                if (!response.ok)
+                  throw new Error("Failed to fetch subscription");
+                return response.json();
+              });
             }
           })
-          .catch((error) => console.error("Error fetching users:", error));
+          .then((subscription) => {
+            if (subscription) {
+              console.log("Fetched Subscription:", subscription);
+              userSelect.value = String(subscription.user_id);
+              subscriptionTypeSelect.value = String(subscription.pricing_id);
+
+              console.log("Selected User ID:", userSelect.value);
+              console.log("Selected Pricing ID:", subscriptionTypeSelect.value);
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading data:", error);
+            alert("Failed to load subscription data: " + error.message);
+          });
 
         const form = document.getElementById("subscriptionForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
+
           const userId = document.getElementById("userName").value;
-          const subscriptionType =
-            document.getElementById("subscriptionType").value;
-          const subscriptionData = {
+          const pricingId = document.getElementById("subscriptionType").value;
+
+          console.log("Before Submitting - User ID:", userId);
+          console.log("Before Submitting - Pricing ID:", pricingId);
+          console.log("Submitting:", {
             user_id: userId,
-            subscription_type: subscriptionType,
-          };
+            pricing_id: pricingId,
+          });
+
+          if (!userId || !pricingId) {
+            alert("Please select both a user and a subscription type.");
+            return;
+          }
 
           fetch(`http://localhost:3000/subscriptions/${subscriptionId}`, {
             method: "PUT",
@@ -257,21 +345,24 @@
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(subscriptionData),
+            body: JSON.stringify({ user_id: userId, pricing_id: pricingId }),
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to update subscription");
+                throw new Error(
+                  `Failed to update subscription: ${response.status}`
+                );
               }
               return response.json();
             })
             .then((data) => {
+              console.log("Server Response:", data);
               alert("Subscription updated successfully!");
               window.location.href = "index.html";
             })
             .catch((error) => {
               console.error("Error updating subscription:", error);
-              alert("Error updating subscription");
+              alert("Error updating subscription: " + error.message);
             });
         });
       });

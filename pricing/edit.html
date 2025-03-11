@@ -46,10 +46,25 @@
         outline: none;
         cursor: pointer;
       }
+      .language-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+        font-weight: 500;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
-
     <div class="sidebar">
       <div class="logo">
         <img
@@ -88,25 +103,36 @@
       </div>
     </div>
 
-
-    <div class="header">
+    <div
+      class="header d-flex justify-content-between align-items-center px-3 py-2"
+    >
       <div class="user-role">Pricing / Edit Pricing</div>
-      <div class="header-right">
-        <button class="avatar">AR</button>
-        <span class="admin-label">Admin</span>
+      <div class="header-right d-flex align-items-center">
+        <button class="language-btn" id="languageBtn">AR</button>
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="admin-label">Admin</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-
 
     <div class="main-container">
       <div class="form-container">
         <form id="pricingForm">
-
           <div class="mb-3">
             <label for="plan" class="form-label">Plan</label>
             <input type="text" class="form-control" id="plan" readonly />
           </div>
-
 
           <div class="mb-3">
             <label for="price" class="form-label">Price</label>
@@ -120,7 +146,6 @@
             />
           </div>
 
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -128,13 +153,10 @@
       </div>
     </div>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-
     <script>
-
       const langButton = document.querySelector(".avatar");
       let currentLang = "en";
       const translations = {
@@ -206,24 +228,23 @@
         setLanguage(currentLang);
       });
 
-    
       function getSubscriptionIdFromHash() {
         return window.location.hash.substring(1);
       }
 
       document.addEventListener("DOMContentLoaded", () => {
         const pricingId = getSubscriptionIdFromHash();
-        const token = localStorage.getItem("token") || "YOUR_BEARER_TOKEN_HERE";
-
+        const token =
+          localStorage.getItem("token") ||
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
         if (pricingId) {
-          fetch(`http://localhost:3000/subscriptions/${pricingId}`, {
+          fetch(`http://localhost:3000/pricing/${pricingId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
             .then((response) => response.json())
             .then((pricing) => {
-     
-              document.getElementById("plan").value = pricing.subscription_type;
+              document.getElementById("plan").value = pricing.plan_name;
               document.getElementById("price").value = pricing.price;
             })
             .catch((error) =>
@@ -231,18 +252,17 @@
             );
         }
 
-     
         const form = document.getElementById("pricingForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          const subscriptionType = document.getElementById("plan").value; 
+          const subscriptionType = document.getElementById("plan").value;
           const price = document.getElementById("price").value;
           const pricingData = {
-            subscription_type: subscriptionType,
+            plan_name: subscriptionType,
             price: price,
           };
 
-          fetch(`http://localhost:3000/subscriptions/${pricingId}`, {
+          fetch(`http://localhost:3000/pricing/${pricingId}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
