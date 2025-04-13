@@ -28,21 +28,6 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
-      }
       .language-btn {
         width: 36px;
         height: 36px;
@@ -208,7 +193,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Correct selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -228,7 +213,7 @@
           },
         },
         ar: {
-          dashboards: "لوحات القيادة",
+          dashboards: "لوحات القيادة", // Fixed typo: removed "manuale"
           overview: "نظرة عامة",
           users: "المستخدمين",
           subscription: "الاشتراك",
@@ -261,7 +246,7 @@
             translations[lang].subscription;
           navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
           navItems[4].innerHTML =
-            '<i class="fas fa-video"></i> ' + translations[lang].user;
+            '<i class="fas fa-upload"></i> ' + translations[lang].user;
         }
         document.querySelector(".user-role").textContent =
           translations[lang].user;
@@ -273,11 +258,10 @@
         document.querySelector(".add-btn").textContent =
           translations[lang].addSubscription;
         const tableHeaders = document.querySelectorAll(".users-table th");
-        if (tableHeaders.length >= 5) {
+        if (tableHeaders.length >= 4) {
           tableHeaders[1].textContent = translations[lang].table.filePath;
           tableHeaders[2].textContent = translations[lang].table.status;
           tableHeaders[3].textContent = translations[lang].table.createdAt;
-          tableHeaders[4].textContent = translations[lang].table.action;
         }
         langButton.textContent = lang === "en" ? "AR" : "EN";
       }
@@ -291,7 +275,7 @@
 
       function fetchVideos(searchQuery = "") {
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2NzgwMzYsImV4cCI6MTc0MTY4MTYzNn0.uUnm48CGlz3ZAbxMrWBHHHpZCiTjL6ki7V_x3wSbbfg";
         const apiUrl = `http://localhost:3000/videos?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
@@ -299,26 +283,33 @@
         fetch(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         })
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then((data) => {
             const videos = data.videos || [];
+            const totalPages = Math.ceil(data.total / data.limit);
             const tbody = document.querySelector(".users-table tbody");
             tbody.innerHTML = "";
             videos.forEach((video, index) => {
               const row = document.createElement("tr");
               row.innerHTML = `
-                <td>${(currentPage - 1) * videos.length + index + 1}</td>
+                <td>${(data.page - 1) * data.limit + index + 1}</td>
                 <td>${video.file_path}</td>
                 <td>${video.status}</td>
                 <td>${new Date(video.createdAt).toLocaleDateString()}</td>
               `;
               tbody.appendChild(row);
             });
-            renderPagination(data.totalPages || 1);
+            renderPagination(totalPages);
           })
-          .catch((error) =>
-            console.error("Error fetching videos data:", error)
-          );
+          .catch((error) => {
+            console.error("Error fetching videos data:", error);
+            alert("Failed to load videos. Please try again.");
+          });
       }
 
       function renderPagination(totalPages) {
@@ -343,6 +334,7 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang);
         const searchInput = document.querySelector(".search-input");
         let searchTimeout;
         searchInput.addEventListener("input", () => {
@@ -355,6 +347,5 @@
         fetchVideos("");
       });
     </script>
-    <div class="pagination-container"></div>
   </body>
 </html>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Subscription</title>
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,7 +13,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
-
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -29,21 +27,6 @@
       html[dir="rtl"] .main-container {
         margin-right: var(--sidebar-width);
         margin-left: 0;
-      }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
       }
       .language-btn {
         width: 36px;
@@ -120,18 +103,18 @@
         <form id="subscriptionForm">
           <div class="mb-3">
             <label for="userName" class="form-label">User Name</label>
-            <select class="form-select" id="userName">
-              <option selected disabled>Select User</option>
+            <select class="form-select" id="userName" required>
+              <option value="" selected disabled>Select User</option>
             </select>
           </div>
-
           <div class="mb-3">
-            <label for="pricing" class="form-label"> Subscription Plan </label>
-            <select class="form-select" id="pricing">
-              <option selected disabled>Select Subscription Plan</option>
+            <label for="pricing" class="form-label">Subscription Plan</label>
+            <select class="form-select" id="pricing" required>
+              <option value="" selected disabled>
+                Select Subscription Plan
+              </option>
             </select>
           </div>
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Create</button>
           </div>
@@ -143,7 +126,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -181,11 +164,11 @@
       function setLanguage(lang) {
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
-        if (navItems.length >= 3) {
+        if (navItems.length >= 5) {
+          // Adjusted to match 5 items
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
           navItems[1].innerHTML =
@@ -193,6 +176,9 @@
           navItems[2].innerHTML =
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-upload"></i> Videos (Training)';
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
@@ -218,66 +204,54 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang); // Initialize language on load
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
-        fetch("http://localhost:3000/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const users = Array.isArray(data) ? data : data.users || [];
-
+        Promise.all([
+          fetch("http://localhost:3000/users", {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch users");
+            return response.json();
+          }),
+          fetch("http://localhost:3000/pricing", {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch pricing");
+            return response.json();
+          }),
+        ])
+          .then(([userData, pricingData]) => {
             const userSelect = document.getElementById("userName");
-            userSelect.innerHTML =
-              "<option selected disabled>Select User</option>";
-
-            if (users.length === 0) {
-              alert("No users found!");
-            }
-
+            const users = Array.isArray(userData)
+              ? userData
+              : userData.users || [];
             users.forEach((user) => {
               const option = document.createElement("option");
               option.value = user.id;
               option.textContent = `${user.first_name} ${user.last_name}`;
               userSelect.appendChild(option);
             });
-          })
-          .catch((error) => {
-            alert("Error fetching users");
-          });
 
-        fetch("http://localhost:3000/pricing", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
             const pricingSelect = document.getElementById("pricing");
-            pricingSelect.innerHTML =
-              "<option selected disabled>Select Subscription Plan</option>";
-
-            const pricingPlans = Array.isArray(data)
-              ? data
-              : data.pricing || [];
-
-            if (pricingPlans.length === 0) {
-              alert("No pricing plans found!");
-            }
-
+            const pricingPlans = Array.isArray(pricingData)
+              ? pricingData
+              : pricingData.pricing || [];
             pricingPlans.forEach((pricing) => {
               const option = document.createElement("option");
               option.value = pricing.id;
               option.textContent = `${pricing.plan_name} - $${pricing.price}`;
               pricingSelect.appendChild(option);
             });
+
+            if (users.length === 0) alert("No users found!");
+            if (pricingPlans.length === 0) alert("No pricing plans found!");
           })
           .catch((error) => {
-            alert("Error fetching pricing plans");
+            console.error("Error fetching data:", error);
+            alert("Error fetching data: " + error.message);
           });
 
         const form = document.getElementById("subscriptionForm");
@@ -285,6 +259,11 @@
           e.preventDefault();
           const userId = document.getElementById("userName").value;
           const pricingId = document.getElementById("pricing").value;
+
+          if (!userId || !pricingId || userId === "" || pricingId === "") {
+            alert("Please select both a user and a subscription plan.");
+            return;
+          }
 
           const subscriptionData = {
             user_id: userId,
@@ -301,7 +280,9 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to create subscription");
+                throw new Error(
+                  `Failed to create subscription: ${response.status}`
+                );
               }
               return response.json();
             })
@@ -310,7 +291,8 @@
               window.location.href = "index.html";
             })
             .catch((error) => {
-              alert("Error creating subscription");
+              console.error("Error creating subscription:", error);
+              alert("Error creating subscription: " + error.message);
             });
         });
       });

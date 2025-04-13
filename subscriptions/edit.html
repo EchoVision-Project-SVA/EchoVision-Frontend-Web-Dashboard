@@ -28,21 +28,6 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
-      }
       .language-btn {
         width: 36px;
         height: 36px;
@@ -132,7 +117,6 @@
               <option value="" selected disabled>Select User</option>
             </select>
           </div>
-
           <div class="mb-3">
             <label for="subscriptionType" class="form-label"
               >Subscription Type</label
@@ -143,7 +127,6 @@
               </option>
             </select>
           </div>
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -155,7 +138,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -237,25 +220,15 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        setLanguage(currentLang);
+        setLanguage(currentLang); // Initialize language on load
         const subscriptionId = getSubscriptionIdFromHash();
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
         const userSelect = document.getElementById("userName");
         const subscriptionTypeSelect =
           document.getElementById("subscriptionType");
-
-        userSelect.addEventListener("change", () => {
-          console.log("User Select Changed to:", userSelect.value);
-        });
-        subscriptionTypeSelect.addEventListener("change", () => {
-          console.log(
-            "Subscription Type Changed to:",
-            subscriptionTypeSelect.value
-          );
-        });
 
         Promise.all([
           fetch("http://localhost:3000/users", {
@@ -272,7 +245,6 @@
           }),
         ])
           .then(([userData, pricingData]) => {
-            console.log("Fetched Users:", userData);
             const users = Array.isArray(userData.users) ? userData.users : [];
             users.forEach((user) => {
               const option = document.createElement("option");
@@ -281,7 +253,6 @@
               userSelect.appendChild(option);
             });
 
-            console.log("Fetched Pricing Data:", pricingData);
             const pricingArray = Array.isArray(pricingData.pricing)
               ? pricingData.pricing
               : [];
@@ -307,12 +278,9 @@
           })
           .then((subscription) => {
             if (subscription) {
-              console.log("Fetched Subscription:", subscription);
-              userSelect.value = String(subscription.user_id);
-              subscriptionTypeSelect.value = String(subscription.pricing_id);
-
-              console.log("Selected User ID:", userSelect.value);
-              console.log("Selected Pricing ID:", subscriptionTypeSelect.value);
+              userSelect.value = String(subscription.user_id) || "";
+              subscriptionTypeSelect.value =
+                String(subscription.pricing_id) || "";
             }
           })
           .catch((error) => {
@@ -326,13 +294,6 @@
 
           const userId = document.getElementById("userName").value;
           const pricingId = document.getElementById("subscriptionType").value;
-
-          console.log("Before Submitting - User ID:", userId);
-          console.log("Before Submitting - Pricing ID:", pricingId);
-          console.log("Submitting:", {
-            user_id: userId,
-            pricing_id: pricingId,
-          });
 
           if (!userId || !pricingId) {
             alert("Please select both a user and a subscription type.");
@@ -356,7 +317,6 @@
               return response.json();
             })
             .then((data) => {
-              console.log("Server Response:", data);
               alert("Subscription updated successfully!");
               window.location.href = "index.html";
             })

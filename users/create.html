@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add User</title>
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/users_create.css" />
-
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -30,22 +27,6 @@
       html[dir="rtl"] .main-container {
         margin-right: var(--sidebar-width);
         margin-left: 0;
-      }
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
       }
       .language-btn {
         width: 36px;
@@ -140,7 +121,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="lastName" class="form-label">Last Name</label>
             <input
@@ -151,7 +131,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input
@@ -162,7 +141,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input
@@ -173,7 +151,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="confirmPassword" class="form-label"
               >Confirm Password</label
@@ -186,12 +163,10 @@
               required
             />
           </div>
-
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="isAdmin" />
             <label class="form-check-label" for="isAdmin">Is Admin?</label>
           </div>
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Create</button>
           </div>
@@ -203,7 +178,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -255,11 +230,11 @@
       function setLanguage(lang) {
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
-        if (navItems.length >= 3) {
+        if (navItems.length >= 5) {
+          // Adjusted to match 5 items
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
           navItems[1].innerHTML =
@@ -267,10 +242,12 @@
           navItems[2].innerHTML =
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-upload"></i> Videos (Training)';
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
-
         const adminName =
           localStorage.getItem("firstName") || translations[lang].admin;
         document.querySelector(".admin-label").textContent = adminName;
@@ -307,6 +284,7 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang); // Initialize language on load
         const form = document.getElementById("userForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
@@ -319,6 +297,11 @@
             document.getElementById("confirmPassword").value;
           const isAdmin = document.getElementById("isAdmin").checked;
 
+          if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+          }
+
           const userData = {
             first_name: firstName,
             last_name: lastName,
@@ -328,7 +311,7 @@
           };
 
           const token =
-            localStorage.getItem("token") ||
+            localStorage.getItem("auth_token") ||
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDExNDg4ODAsImV4cCI6MTc0MTE1MjQ4MH0.A8d5NXx_JyJm01h6J_xFU3W9x398dqk4WlsiD-hFO_s";
 
           fetch("http://localhost:3000/users", {
@@ -341,7 +324,7 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to create user");
+                throw new Error(`HTTP error! status: ${response.status}`);
               }
               return response.json();
             })

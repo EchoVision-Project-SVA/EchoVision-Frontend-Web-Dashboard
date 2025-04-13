@@ -8,13 +8,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/users_create.css" />
-
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -29,21 +27,6 @@
       html[dir="rtl"] .main-container {
         margin-right: var(--sidebar-width);
         margin-left: 0;
-      }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
       }
       .language-btn {
         width: 36px;
@@ -84,15 +67,15 @@
         >
           Dashboards
         </div>
-        <a href="../index.html" class="nav-item"
-          ><i class="fas fa-chart-pie"></i> Overview</a
-        >
-        <a href="index.html" class="nav-item active"
-          ><i class="fas fa-users"></i> Users</a
-        >
-        <a href="../subscriptions/index.html" class="nav-item"
-          ><i class="fas fa-credit-card"></i> Subscriptions</a
-        >
+        <a href="../index.html" class="nav-item">
+          <i class="fas fa-chart-pie"></i> Overview
+        </a>
+        <a href="index.html" class="nav-item active">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a href="../subscriptions/index.html" class="nav-item">
+          <i class="fas fa-credit-card"></i> Subscriptions
+        </a>
         <a href="../pricing/index.html" class="nav-item">
           <i class="fas fa-dollar-sign"></i> Pricing
         </a>
@@ -138,7 +121,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="lastName" class="form-label">Last Name</label>
             <input
@@ -149,7 +131,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input
@@ -160,7 +141,6 @@
               required
             />
           </div>
-
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input
@@ -170,7 +150,6 @@
               placeholder="Enter New Password"
             />
           </div>
-
           <div class="mb-3">
             <label for="confirmPassword" class="form-label"
               >Confirm Password</label
@@ -182,12 +161,10 @@
               placeholder="Confirm New Password"
             />
           </div>
-
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="isAdmin" />
             <label class="form-check-label" for="isAdmin">Is Admin?</label>
           </div>
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -199,7 +176,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -251,11 +228,11 @@
       function setLanguage(lang) {
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
-        if (navItems.length >= 3) {
+        if (navItems.length >= 5) {
+          // Adjusted to match 5 items
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
           navItems[1].innerHTML =
@@ -263,6 +240,9 @@
           navItems[2].innerHTML =
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-upload"></i> Videos (Training)';
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
@@ -306,25 +286,34 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang); // Initialize language on load
         const userId = getUserIdFromHash();
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
         if (userId) {
           fetch(`http://localhost:3000/users/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
-            .then((response) => response.json())
-            .then((user) => {
-              document.getElementById("firstName").value = user.first_name;
-              document.getElementById("lastName").value = user.last_name;
-              document.getElementById("email").value = user.email;
-              document.getElementById("isAdmin").checked = user.is_admin;
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
             })
-            .catch((error) =>
-              console.error("Error fetching user data:", error)
-            );
+            .then((user) => {
+              document.getElementById("firstName").value =
+                user.first_name || "";
+              document.getElementById("lastName").value = user.last_name || "";
+              document.getElementById("email").value = user.email || "";
+              document.getElementById("isAdmin").checked =
+                user.is_admin || false;
+            })
+            .catch((error) => {
+              console.error("Error fetching user data:", error);
+              alert("Failed to load user data. Please try again.");
+            });
         }
 
         const form = document.getElementById("userForm");

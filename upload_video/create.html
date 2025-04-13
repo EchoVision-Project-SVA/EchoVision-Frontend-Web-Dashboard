@@ -28,21 +28,6 @@
         margin-right: var(--sidebar-width);
         margin-left: 0;
       }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
-      }
       .language-btn {
         width: 36px;
         height: 36px;
@@ -151,7 +136,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -163,7 +148,6 @@
           admin: "Admin",
           form: {
             videoLabel: "Video File",
-            videoPlaceholder: "Choose a video file",
             create: "Create",
           },
         },
@@ -176,7 +160,6 @@
           admin: "مدير",
           form: {
             videoLabel: "ملف الفيديو",
-            videoPlaceholder: "اختر ملف فيديو",
             create: "إنشاء",
           },
         },
@@ -198,7 +181,7 @@
             translations[lang].subscription;
           navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
           navItems[4].innerHTML =
-            '<i class="fas fa-video"></i> Videos (Training)';
+            '<i class="fas fa-upload"></i> Videos (Training)'; // Fixed icon consistency
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
@@ -207,8 +190,6 @@
         document.querySelector(".admin-label").textContent = adminName;
         document.querySelector('label[for="videoFile"]').textContent =
           translations[lang].form.videoLabel;
-        document.querySelector("#videoFile").placeholder =
-          translations[lang].form.videoPlaceholder;
         document.querySelector(".btn-create").textContent =
           translations[lang].form.create;
         langButton.textContent = lang === "en" ? "AR" : "EN";
@@ -220,16 +201,21 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang); // Initialize language on load
         const form = document.getElementById("videoForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
           const token =
-            localStorage.getItem("token") ||
+            localStorage.getItem("auth_token") ||
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2NzgwMzYsImV4cCI6MTc0MTY4MTYzNn0.uUnm48CGlz3ZAbxMrWBHHHpZCiTjL6ki7V_x3wSbbfg";
 
           const fileInput = document.getElementById("videoFile");
           if (fileInput.files.length === 0) {
-            alert("Please select a video file.");
+            alert(
+              currentLang === "en"
+                ? "Please select a video file."
+                : "يرجى اختيار ملف فيديو."
+            );
             return;
           }
           const file = fileInput.files[0];
@@ -245,17 +231,25 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to upload video");
+                throw new Error(`Failed to upload video: ${response.status}`);
               }
               return response.json();
             })
             .then((data) => {
-              alert("Video uploaded successfully!");
+              alert(
+                currentLang === "en"
+                  ? "Video uploaded successfully!"
+                  : "تم رفع الفيديو بنجاح!"
+              );
               window.location.href = "index.html";
             })
             .catch((error) => {
               console.error("Error uploading video:", error);
-              alert("Error uploading video");
+              alert(
+                currentLang === "en"
+                  ? "Error uploading video: " + error.message
+                  : "خطأ في رفع الفيديو: " + error.message
+              );
             });
         });
       });

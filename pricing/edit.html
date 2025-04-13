@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Pricing</title>
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../public/css/subscriptions_create.css" />
-
     <style>
       html[dir="rtl"] .sidebar {
         right: 0;
@@ -30,21 +27,6 @@
       html[dir="rtl"] .main-container {
         margin-right: var(--sidebar-width);
         margin-left: 0;
-      }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
       }
       .language-btn {
         width: 36px;
@@ -133,7 +115,6 @@
             <label for="plan" class="form-label">Plan</label>
             <input type="text" class="form-control" id="plan" readonly />
           </div>
-
           <div class="mb-3">
             <label for="price" class="form-label">Price</label>
             <input
@@ -145,7 +126,6 @@
               required
             />
           </div>
-
           <div class="form-footer">
             <button type="submit" class="btn btn-create">Update</button>
           </div>
@@ -157,7 +137,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -165,7 +145,7 @@
           overview: "Overview",
           users: "Users",
           subscription: "Subscription",
-          headerText: "Subscriptions / Edit Pricing",
+          headerText: "Pricing / Edit Pricing", // Corrected header text
           admin: "Admin",
           form: {
             planLabel: "Plan",
@@ -179,7 +159,7 @@
           overview: "نظرة عامة",
           users: "المستخدمين",
           subscription: "الاشتراك",
-          headerText: "الاشتراكات / تعديل التسعير",
+          headerText: "التسعير / تعديل التسعير", // Corrected header text
           admin: "مدير",
           form: {
             planLabel: "الخطة",
@@ -193,11 +173,11 @@
       function setLanguage(lang) {
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
         document.querySelector(".sidebar-header").textContent =
           translations[lang].dashboards;
         const navItems = document.querySelectorAll(".sidebar a.nav-item");
-        if (navItems.length >= 3) {
+        if (navItems.length >= 5) {
+          // Adjusted to match 5 items
           navItems[0].innerHTML =
             '<i class="fas fa-chart-pie"></i> ' + translations[lang].overview;
           navItems[1].innerHTML =
@@ -205,13 +185,15 @@
           navItems[2].innerHTML =
             '<i class="fas fa-credit-card"></i> ' +
             translations[lang].subscription;
+          navItems[3].innerHTML = '<i class="fas fa-dollar-sign"></i> Pricing';
+          navItems[4].innerHTML =
+            '<i class="fas fa-upload"></i> Videos (Training)';
         }
         document.querySelector(".user-role").textContent =
           translations[lang].headerText;
         const adminName =
           localStorage.getItem("firstName") || translations[lang].admin;
         document.querySelector(".admin-label").textContent = adminName;
-
         document.querySelector('label[for="plan"]').textContent =
           translations[lang].form.planLabel;
         document.querySelector('label[for="price"]').textContent =
@@ -228,38 +210,50 @@
         setLanguage(currentLang);
       });
 
-      function getSubscriptionIdFromHash() {
+      function getPricingIdFromHash() {
+        // Renamed for clarity
         return window.location.hash.substring(1);
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        const pricingId = getSubscriptionIdFromHash();
+        setLanguage(currentLang); // Initialize language on load
+        const pricingId = getPricingIdFromHash();
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
 
         if (pricingId) {
           fetch(`http://localhost:3000/pricing/${pricingId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
-            .then((response) => response.json())
-            .then((pricing) => {
-              document.getElementById("plan").value = pricing.plan_name;
-              document.getElementById("price").value = pricing.price;
+            .then((response) => {
+              if (!response.ok) throw new Error("Failed to fetch pricing data");
+              return response.json();
             })
-            .catch((error) =>
-              console.error("Error fetching pricing data:", error)
-            );
+            .then((pricing) => {
+              document.getElementById("plan").value = pricing.plan_name || "";
+              document.getElementById("price").value = pricing.price || "";
+            })
+            .catch((error) => {
+              console.error("Error fetching pricing data:", error);
+              alert("Error fetching pricing data: " + error.message);
+            });
         }
 
         const form = document.getElementById("pricingForm");
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          const subscriptionType = document.getElementById("plan").value;
+          const planName = document.getElementById("plan").value; // Renamed for clarity
           const price = document.getElementById("price").value;
+
+          if (!price) {
+            alert("Please enter a price.");
+            return;
+          }
+
           const pricingData = {
-            plan_name: subscriptionType,
-            price: price,
+            plan_name: planName,
+            price: parseFloat(price), // Ensure price is a number
           };
 
           fetch(`http://localhost:3000/pricing/${pricingId}`, {
@@ -272,7 +266,7 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to update pricing");
+                throw new Error(`Failed to update pricing: ${response.status}`);
               }
               return response.json();
             })
@@ -282,7 +276,7 @@
             })
             .catch((error) => {
               console.error("Error updating pricing:", error);
-              alert("Error updating pricing");
+              alert("Error updating pricing: " + error.message);
             });
         });
       });

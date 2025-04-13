@@ -156,8 +156,9 @@
     <script>
       function handleUnauthorized(response) {
         if (response.status === 401) {
-          localStorage.removeItem("token");
-          window.location.href = "login.html";
+          localStorage.removeItem("auth_token");
+          window.location.href =
+            "../EchoVision-Frontend-Web-Interface/index.html";
           return true;
         }
         return false;
@@ -165,8 +166,9 @@
 
       document.getElementById("logoutBtn").addEventListener("click", (e) => {
         e.preventDefault();
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
+        localStorage.removeItem("auth_token");
+        window.location.href =
+          "../EchoVision-Frontend-Web-Interface/index.html";
       });
 
       const languageBtn = document.getElementById("languageBtn");
@@ -233,7 +235,8 @@
       });
 
       document.addEventListener("DOMContentLoaded", () => {
-        const token = localStorage.getItem("token") || "YOUR_FALLBACK_TOKEN";
+        const token =
+          localStorage.getItem("auth_token") || "YOUR_FALLBACK_TOKEN";
         const apiUrl = "http://localhost:3000/stats/dashboard";
         fetch(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },

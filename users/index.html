@@ -284,14 +284,16 @@
 
       document.getElementById("logoutBtn").addEventListener("click", (e) => {
         e.preventDefault();
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
+        localStorage.removeItem("auth_token");
+        window.location.href =
+          "../EchoVision-Frontend-Web-Interface/index.html";
       });
 
       let currentPage = 1;
 
       function fetchUsers(searchQuery = "") {
-        const token = localStorage.getItem("token") || "YOUR_FALLBACK_TOKEN";
+        const token =
+          localStorage.getItem("auth_token") || "YOUR_FALLBACK_TOKEN";
         const apiUrl = `http://localhost:3000/users?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
         )}`;

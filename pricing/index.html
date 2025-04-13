@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pricing Management Dashboard</title>
-
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -29,21 +27,6 @@
       html[dir="rtl"] .main-container {
         margin-right: var(--sidebar-width);
         margin-left: 0;
-      }
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background-color: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-        font-weight: 500;
-        font-size: 14px;
-        border: none;
-        outline: none;
-        cursor: pointer;
       }
       .language-btn {
         width: 36px;
@@ -210,7 +193,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script>
-      const langButton = document.querySelector(".avatar");
+      const langButton = document.querySelector("#languageBtn"); // Fixed selector
       let currentLang = "en";
       const translations = {
         en: {
@@ -285,9 +268,10 @@
       });
 
       let currentPage = 1;
+
       function fetchPricing(searchQuery = "") {
         const token =
-          localStorage.getItem("token") ||
+          localStorage.getItem("auth_token") ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlzX2FkbWluIjp0cnVlLCJpYXQiOjE3NDE2ODI4MjMsImV4cCI6MTc0MTY4NjQyM30.WMshp3K9i4kWcE4_SUIRCoPrHObjoGlE6Rbzyaz23f0";
         const apiUrl = `http://localhost:3000/pricing?page=${currentPage}&search=${encodeURIComponent(
           searchQuery
@@ -295,16 +279,21 @@
         fetch(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
         })
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then((data) => {
             const pricing = data.pricing || [];
-            const totalPages = data.totalPages || 1;
+            const totalPages = Math.ceil(data.total / data.limit); // Calculate total pages
             const tbody = document.querySelector(".users-table tbody");
             tbody.innerHTML = "";
             pricing.forEach((item, index) => {
               const row = document.createElement("tr");
               row.innerHTML = `
-                <td>${(currentPage - 1) * pricing.length + index + 1}</td>
+                <td>${(data.page - 1) * data.limit + index + 1}</td>
                 <td>${item.plan_name}</td>
                 <td>$${item.price}</td>
                 <td>
@@ -343,9 +332,10 @@
             });
             renderPagination(totalPages);
           })
-          .catch((error) =>
-            console.error("Error fetching pricing data:", error)
-          );
+          .catch((error) => {
+            console.error("Error fetching pricing data:", error);
+            alert("Failed to load pricing data. Please try again.");
+          });
       }
 
       function renderPagination(totalPages) {
@@ -370,6 +360,7 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        setLanguage(currentLang); // Initialize language on load
         const searchInput = document.querySelector(".search-input");
         let searchTimeout;
         searchInput.addEventListener("input", () => {
@@ -379,10 +370,8 @@
             fetchPricing(searchInput.value);
           }, 500);
         });
-        fetchPricing("");
+        fetchPricing(""); // Initial fetch
       });
     </script>
-
-    <div class="pagination-container"></div>
   </body>
 </html>
